@@ -6,36 +6,29 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
-// Stub
 public class PostRepository {
-  private static final Set<Post> REPOSITORY = ConcurrentHashMap.newKeySet();
+  private static final Map<Long, Post> REPOSITORY = new ConcurrentHashMap<>();
   private static final AtomicLong ID_COUNTER = new AtomicLong();
 
   public List<Post> all() {
-      return new ArrayList<>(REPOSITORY);
+      return new ArrayList<>(REPOSITORY.values());
   }
 
   public Optional<Post> getById(long id) {
-    return REPOSITORY.stream().filter(x -> x.getId() == id).findFirst();
+    return Optional.of(REPOSITORY.get(id));
   }
 
   public Post save(Post post) {
-    if (post.getId() == 0){
-      post.setId(ID_COUNTER.getAndIncrement());
-      REPOSITORY.add(post);
+    if (REPOSITORY.containsKey(post.getId()) && post.getId() != 0){
+      REPOSITORY.get(post.getId()).setContent(post.getContent());
     }else{
-      Optional<Post> currentPost = REPOSITORY.stream().filter(x -> x.getId() == post.getId()).findFirst();
-      if(currentPost.isPresent()){
-        currentPost.get().setContent(post.getContent());
-      } else {
-        post.setId(ID_COUNTER.getAndIncrement());
-        REPOSITORY.add(post);
-      }
+      post.setId(ID_COUNTER.getAndIncrement());
+      REPOSITORY.put(ID_COUNTER.get(), post);
     }
     return post;
   }
 
   public void removeById(long id) {
-    REPOSITORY.removeIf(x -> x.getId() == id);
+      REPOSITORY.remove(id);
   }
 }
