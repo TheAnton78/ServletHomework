@@ -1,12 +1,14 @@
 package ru.netology.repository;
 
+import org.springframework.stereotype.Repository;
 import ru.netology.model.Post;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
-public class PostRepositoryStubImpl {
+@Repository
+public class PostRepositoryStubImpl implements PostRepository {
   private static final Map<Long, Post> REPOSITORY = new ConcurrentHashMap<>();
   private static final AtomicLong ID_COUNTER = new AtomicLong();
 
